@@ -1,6 +1,6 @@
-import React, { useEffect} from 'react'
+import React, { useState,useEffect} from 'react'
 import {Link} from 'react-router-dom'
-import {Col,Row,Image,ListGroup,Card,Button, ListGroupItem} from 'react-bootstrap'
+import {Col,Row,Image,ListGroup,Card,Button, ListGroupItem, Form} from 'react-bootstrap'
 import Rating from '../components/Rating'
 import { listProductDetails } from '../redux/actions/productActions'
 import { useSelector,useDispatch} from 'react-redux'
@@ -8,7 +8,8 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 
 
-const ProductScreen = ({match}) => {
+const ProductScreen = ({history,match}) => {
+ const [qty, setQty] = useState(1)
 const dispatch=useDispatch()
   const productDetails=useSelector(state=>state.productDetails)
    const{loading,error,product}=productDetails
@@ -20,6 +21,9 @@ const dispatch=useDispatch()
     
     
       }, [dispatch,match])
+      const addToCartHandler=()=>{
+history.push(`/cart/${match.params.id}?qty=${qty}`)
+      }
     return (
         <>
      
@@ -66,10 +70,39 @@ const dispatch=useDispatch()
         <Col>
         {product.countInStock>0?'In Stock':'Out of Stock'}
         </Col>
+
     </Row>
 </ListGroupItem>
+{product.countInStock>0&&(
+    <ListGroup.Item>
+        <Row>
+            <Col>Qty</Col>
+            <Col>
+            <Form.Control as='select' value={qty} 
+            
+            onChange={(e)=>
+            setQty(e.target.value)}>
+{
+  [...Array(product.countInStock).keys()] .map(x=>(
+    <option key={x+1} value={x+1}>
+        {x+1}
+    </option>
+))
+}
+             
+            </Form.Control>
+            </Col>
+        </Row>
+    </ListGroup.Item>
+)}
+
+
+
+
 <ListGroupItem>
-    <Button  type='button' disabled={product.countInStock===0} className='w-100'>
+    <Button  
+    onClick={addToCartHandler}
+    type='button' disabled={product.countInStock===0} className='w-100'>
         Add To Cart
     </Button>
 </ListGroupItem>

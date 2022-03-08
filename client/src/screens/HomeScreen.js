@@ -9,10 +9,12 @@ import Message from '../components/Message'
 
 
 const HomeScreen = () => {
+ 
   const dispatch=useDispatch()
   const productList= useSelector(state=>state.productList)
  const{loading,error,products}=productList
   useEffect(() => {
+  
   dispatch(listProducts())
   
 
@@ -20,7 +22,7 @@ const HomeScreen = () => {
 
   return (
     <>
-    <h1>Latest Products</h1>
+    <h1>Welcome to BAZAR</h1>
     {loading?(<Loader/>
     ):error?(
       <Message variant='danger'>{error}</Message>
