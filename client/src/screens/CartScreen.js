@@ -8,7 +8,7 @@ import { addToCart, removeFromCart } from '../redux/actions/cartActions'
 
 const CartScreen = ({match,location,history}) => {
     const productId=match.params.id
-    console.log(productId)
+  
     const qty=location.search?Number(location.search.split('=')[1]):1
     const dispatch=useDispatch()
     const cart = useSelector(state=>state.cart)
@@ -27,6 +27,8 @@ const CartScreen = ({match,location,history}) => {
     history.push('/login?redirect=shipping')
    }
   return (
+      <>
+    <Link className='btn btn-light my-3' to='/'>Go Back</Link>
     <Row>
         <Col md={8}>
             <h1>Shopping Cart</h1>
@@ -91,7 +93,7 @@ const CartScreen = ({match,location,history}) => {
           </Card>
           </Col>
         </Row>
-       
+        </>
   )
 }
 
