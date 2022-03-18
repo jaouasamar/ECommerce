@@ -29,7 +29,7 @@ const ProductCaroussel = () => {
             <Image
               src={product.image}
               alt={product.name}
-              width="150px"
+              width="200px"
               height="200px"
             />
             <Carousel.Caption className="carousel-caption">
