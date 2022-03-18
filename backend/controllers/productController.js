@@ -8,14 +8,20 @@ import Product from '../models/productModel.js'
 //@access Public
 
 const getProducts=asyncHandler(async(req,res)=>{
+    const pageSize = 3
+    const page = Number(req.query.pageNumber) || 1
     const keyword=req.query.keyword?{
         name:{
             $regex:req.query.keyword,
             $options:'i'
         }
     }:{}
-    const products=await Product.find({...keyword})
-    res.json(products)
+    const count = await Product.countDocuments({ ...keyword })
+    const products = await Product.find({ ...keyword })
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+  
+    res.json({ products, page, pages: Math.ceil(count / pageSize) })
 })
 //@desc   Fetch single product
 //@route GET /api/products/:id
@@ -49,31 +55,29 @@ const deleteProduct=asyncHandler(async(req,res)=>{
 //@access Private/Admin
 
 const createProduct=asyncHandler(async(req,res)=>{
-    const product = new Product({
-        name: 'Sample name',
-        price: 0,
-        user: req.user._id,
-        image: '/images/sample.jpg',
-        brand: 'Sample brand',
-        category: 'Sample category',
-        countInStock: 0,
-        numReviews: 0,
-        description: 'Sample description',
-      })
-      const createdProduct= await product.save()
-      res.status(201).json(createdProduct)
-})
+    const {name,price,image,countInStock,description,brand,category}=req.body
+    const createdProduct = new Product({name,price,image,countInStock,description,brand,category})
+    try{
+        await createdProduct.save();
+        res.status(201).json(createdProduct)
+    }catch(error)
+    {
+        res.status(404)
+        throw new Error('Creation Failed')
+    }
+    }
+)
 //@desc   update  product
 //@route PUT /api/products/:id
 //@access Private/Admin
 
 const updateProduct=asyncHandler(async(req,res)=>{
-    const {name,price,image,brand,category,countInStock,description}=req.body
+    const {name,price,brand,category,countInStock,description}=req.body
     const product= await Product.findById(req.params.id)
     if (product){
         product.name=name
         product.price=price
-        product.image=image
+      
         product.brand=brand
         product.category=category
         product.countInStock=countInStock

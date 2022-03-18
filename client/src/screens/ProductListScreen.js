@@ -20,35 +20,29 @@ const ProductListScreen = ({history}) => {
     const productDelete=useSelector(state=>state.productDelete)
     const {error:errorDelete,loading:loadingDelete,success:successDelete}=productDelete
     const productCreate = useSelector((state) => state.productCreate)
+    const {successUpdate}= useSelector((state) => state.productUpdate)
     const {
     
    
       success: successCreate,
-      product: createdProduct,
+      
     } = productCreate
     useEffect(() => {
         if(!userInfo.isAdmin){
             history.push('/login')}
-            if (successCreate) {
-                history.push(`/admin/product/${createdProduct._id}/edit`)
-              } else {
+           else {
                 dispatch(listProducts())
               }
      
      
-    }, [dispatch,history,userInfo,successDelete,successCreate])
+    }, [dispatch,history,userInfo,successDelete,successCreate,successUpdate])
     const deleteHandler=(id)=>{
         if(window.confirm('Are you sure?')){
 dispatch(deleteProduct(id))
         }
 
     }
-    const createProductHandler=()=>{
-      
-dispatch(CreateProduct())
-        
-
-    }
+  
     return(
     <>
      <Link className='btn btn-light my-3' to='/'>Go Back</Link>
@@ -57,9 +51,12 @@ dispatch(CreateProduct())
         <h1>Products</h1>
         </Col>
         <Col style={{ textAlign: 'right' }}>
-            <Button className='my-3' onClick={createProductHandler}>
-                <i className='fas fa-plus'></i>Create Product
-            </Button>
+        <LinkContainer to='/admin/product/create'>
+                                <Button variant='Light' className='btn-sm'>
+                                    <i className='fas fa-edit'>Create Product</i>
+                                   </Button>
+                            </LinkContainer>
+            
         </Col>
     </Row>
     {loadingDelete&&<Loader/>}
@@ -71,9 +68,10 @@ dispatch(CreateProduct())
             <td>ID</td>
             <td>NAME</td>
             <td>PRICE</td>
-            <td>countInStock</td>
+            <td>CountInStock</td>
             <td>CATEGORY</td>
             <td>BRAND</td>
+            <td>IMAGE</td>
         </tr>
         </thead>
         <tbody>

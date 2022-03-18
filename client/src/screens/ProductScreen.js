@@ -34,7 +34,13 @@ const dispatch=useDispatch()
     
       }, [dispatch,match,successProductReview])
       const addToCartHandler=()=>{
-history.push(`/cart/${match.params.id}?qty=${qty}`)
+          if(!userInfo)
+          {
+           alert("please Log In to add an item!")
+          }else {
+            history.push(`/cart/${match.params.id}?qty=${qty}`)
+          }
+
       }
       const submitHandler=(e)=>{
 e.preventDefault();
@@ -117,12 +123,20 @@ dispatch(createProductReview(match.params.id,{rating,comment}))
 
 
 
-<ListGroupItem>
+<ListGroupItem>{(!userInfo)?(
+    <>
+<Message>Please <Link to='/login'>sign In</Link>&nbsp;to add an Item</Message>
+<Button  
+    
+    type='button' disabled className='w-100'>
+        Add To Cart
+    </Button>
+    </>):(
     <Button  
     onClick={addToCartHandler}
     type='button' disabled={product.countInStock===0} className='w-100'>
         Add To Cart
-    </Button>
+    </Button>)}
 </ListGroupItem>
               </ListGroup>
           </Card>
@@ -174,7 +188,7 @@ dispatch(createProductReview(match.params.id,{rating,comment}))
 
 
 
-):<Message>Please <Link to='/login'>sign In</Link>to write a review</Message>}
+):<Message>Please <Link to='/login'>sign In</Link>&nbsp;to write a review</Message>}
               </ListGroup.Item>
           </ListGroup>
       </Col>
